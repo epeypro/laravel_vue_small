@@ -32,7 +32,7 @@
                                 <td>{{ user.created_at | myDate}}</td>
                                 <td>
                                     <a href="#" ><i class="fa fa-edit green"></i></a>
-                                    <a href="#"><i class="fa fa-trash red"></i></a>
+                                    <a href="#" @click="deleteUser(user.id)"><i class="fa fa-trash red"></i></a>
                                 </td>
                             </tr>
 
@@ -125,32 +125,67 @@
             }
         },
         methods: {
+            deleteUser(id) {
+                Swal.fire({
+                    title: 'Gerçeten silecek misin?',
+                    text: "Bu işin geri dönüşü yok hea!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Tamam, siliyorum!',
+                    cancelButtonText: 'Yok, vazgeçtim!'
+                }).then((result) => {
+
+                    this.form.delete('api/user/'+id).then(() => {
+                        Swal.fire(
+                            'Hoooppp, silindi!',
+                            'Walla sildin, İnşallah yanlış silmemişindir.',
+                            'success'
+                            )
+
+                    }).catch(() => {
+                        Swal.fire(
+                            'Hayydaaaa!',
+                            'Silinmedi. Ne oldu anlamadım!.',
+                            'warning'
+                        );
+                    });
+
+                })
+            },
             loadUsers(){
                 axios.get("api/user").then(({ data }) =>( this.users = data.data ));
             },
 
             createUser(){
                 this.$Progress.start();
-                this.form.post('/api/user');
-                Fire.$emit('AfterCreate');
-                $('#FormEkle').modal('hide')
+                this.form.post('/api/user')
+                   .then(() => {
+                        Fire.$emit('AfterCreate');
 
-                Toast.fire({
-                    icon: 'success',
-                    title: 'Üye başarlı bir şekilde eklendi'
+                       $('#FormEkle').modal('hide');
+
+                        Toast.fire({
+                            icon: 'success',
+                            title: 'Üye başarlı bir şekilde eklendi'
+                        })
+
+                        this.$Progress.finish();
+
+
                 })
 
-
-
-                this.$Progress.finish();
-
-            }
+                .catch(() => {
+                        console.log("Error......")
+                    })
+                }
         },
         created() {
           this.loadUsers();
           // setInterval(() => this.loadUsers(),3000);
 
-            Fire.$on('AfterCreate',()=>{
+            Fire.$on('AfterCreate',()=> {
                 this.loadUsers();
             });
         }
