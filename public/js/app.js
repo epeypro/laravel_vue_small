@@ -2154,20 +2154,23 @@ __webpack_require__.r(__webpack_exports__);
       var _this = this;
 
       Swal.fire({
-        title: 'Gerçeten silecek misin?',
-        text: "Bu işin geri dönüşü yok hea!",
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
-        confirmButtonText: 'Tamam, siliyorum!',
-        cancelButtonText: 'Yok, vazgeçtim!'
+        confirmButtonText: 'Yes, delete it!'
       }).then(function (result) {
-        _this.form["delete"]('api/user/' + id).then(function () {
-          Swal.fire('Hoooppp, silindi!', 'Walla sildin, İnşallah yanlış silmemişindir.', 'success');
-        })["catch"](function () {
-          Swal.fire('Hayydaaaa!', 'Silinmedi. Ne oldu anlamadım!.', 'warning');
-        });
+        if (result.value) {
+          _this.form["delete"]('api/user/' + id).then(function () {
+            Swal.fire('Deleted!', 'Your file has been deleted.', 'success');
+
+            _this.loadUsers();
+          })["catch"](function () {
+            Swal.fire('Haydaaaa!', 'Bir hata oldu. Silinemedi.', 'warning');
+          });
+        }
       });
     },
     loadUsers: function loadUsers() {
@@ -78978,14 +78981,15 @@ __webpack_require__.r(__webpack_exports__);
 /*!******************************************!*\
   !*** ./resources/js/components/User.vue ***!
   \******************************************/
-/*! exports provided: default */
+/*! no static exports found */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _User_vue_vue_type_template_id_d884f594___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./User.vue?vue&type=template&id=d884f594& */ "./resources/js/components/User.vue?vue&type=template&id=d884f594&");
 /* harmony import */ var _User_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./User.vue?vue&type=script&lang=js& */ "./resources/js/components/User.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _User_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__) if(__WEBPACK_IMPORT_KEY__ !== 'default') (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _User_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__[key]; }) }(__WEBPACK_IMPORT_KEY__));
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
 
@@ -79015,7 +79019,7 @@ component.options.__file = "resources/js/components/User.vue"
 /*!*******************************************************************!*\
   !*** ./resources/js/components/User.vue?vue&type=script&lang=js& ***!
   \*******************************************************************/
-/*! exports provided: default */
+/*! no static exports found */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";

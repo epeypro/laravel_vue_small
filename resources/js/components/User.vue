@@ -125,35 +125,37 @@
             }
         },
         methods: {
+
             deleteUser(id) {
                 Swal.fire({
-                    title: 'Gerçeten silecek misin?',
-                    text: "Bu işin geri dönüşü yok hea!",
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#3085d6',
                     cancelButtonColor: '#d33',
-                    confirmButtonText: 'Tamam, siliyorum!',
-                    cancelButtonText: 'Yok, vazgeçtim!'
+                    confirmButtonText: 'Yes, delete it!'
                 }).then((result) => {
 
-                    this.form.delete('api/user/'+id).then(() => {
-                        Swal.fire(
-                            'Hoooppp, silindi!',
-                            'Walla sildin, İnşallah yanlış silmemişindir.',
-                            'success'
+
+                    if (result.value) {
+                        this.form.delete('api/user/' + id).then(() => {
+                            Swal.fire(
+                                'Deleted!',
+                                'Your file has been deleted.',
+                                'success'
                             )
-
-                    }).catch(() => {
-                        Swal.fire(
-                            'Hayydaaaa!',
-                            'Silinmedi. Ne oldu anlamadım!.',
-                            'warning'
-                        );
-                    });
-
-                })
+                            this.loadUsers()
+                        }).catch(() => {
+                            Swal.fire(
+                                'Haydaaaa!',
+                                'Bir hata oldu. Silinemedi.',
+                                'warning'
+                            );
+                        });
+                    }})
             },
+
             loadUsers(){
                 axios.get("api/user").then(({ data }) =>( this.users = data.data ));
             },
@@ -172,9 +174,7 @@
                         })
 
                         this.$Progress.finish();
-
-
-                })
+                   })
 
                 .catch(() => {
                         console.log("Error......")
