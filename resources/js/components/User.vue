@@ -7,7 +7,7 @@
                         <h3 class="card-title">Üye listesi</h3>
 
                         <div class="card-tools">
-                            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#FormEkle"><i class="fa fa-user-plus"></i> Ekle</button>
+                            <button class="btn btn-success" @click="newModal">Yeni Ekle <i class="fas fa-user-plus fa-fw"></i></button>
                         </div>
                     </div>
                     <!-- /.card-header -->
@@ -31,7 +31,7 @@
                                 <td>{{ user.type | upText }}</td>
                                 <td>{{ user.created_at | myDate}}</td>
                                 <td>
-                                    <a href="#" ><i class="fa fa-edit green"></i></a>
+                                    <a href="#"  @click="editModal(user)"><i class="fa fa-edit green"></i></a>
                                     <a href="#" @click="deleteUser(user.id)"><i class="fa fa-trash red"></i></a>
                                 </td>
                             </tr>
@@ -46,16 +46,17 @@
         </div>
 
         <!--    Ekleme formu başlangıç-->
-        <div class="modal fade" id="FormEkle" tabindex="-1" role="dialog" aria-labelledby="FormEkleLabel" aria-hidden="true">
+        <div class="modal fade" id="AddNew" tabindex="-1" role="dialog" aria-labelledby="AddNewLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="FormEkleLabel">Yeni Üye Ekle</h5>
+                        <h5 class="modal-title" v-show="!editmode" id="addNewLabel">Add New</h5>
+                        <h5 class="modal-title" v-show="editmode" id="addNewLabel">Update User's Info</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <form @submit.prevent="createUser">
+                    <form @submit.prevent="editmode ? updateUser() : createUser()">
                     <div class="modal-body">
                         <div class="form-group">
                             <label>İsim Soyisim</label>
@@ -93,7 +94,8 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-danger" data-dismiss="modal">Kapat</button>
-                        <button type="submit" class="btn btn-primary">Kaydet</button>
+                        <button v-show="editmode" type="submit" class="btn btn-success">Update</button>
+                        <button v-show="!editmode" type="submit" class="btn btn-primary">Create</button>
                     </div>
                     </form>
 
@@ -109,12 +111,17 @@
 
 </template>
 
+
+
 <script>
     export default {
+
         data(){
             return {
+                editmode: false,
                 users: {},
                 form: new Form({
+                    id: '',
                     name: '',
                     email: '',
                     password: '',
@@ -125,6 +132,35 @@
             }
         },
         methods: {
+            updateUser() {
+                // this.$Progress.start();
+                this.form.put('api/user/'+this.form.id)
+                .then(() => {
+                    $('#AddNew').modal('hide');
+                    Swal.fire(
+                        'Tebrikler!',
+                        'Üye başarlı bir şekilde güncellendi.',
+                        'success'
+                        )
+                    this.loadUsers();
+                    this.$Progress.finish();
+
+                })
+                .catch(() => {
+                    this.$Progress.fail();
+                })
+            },
+            editModal(user) {
+                this.editmode = true;
+                this.form.reset();
+                $('#AddNew').modal('show');
+                this.form.fill(user);
+            },
+            newModal() {
+                this.editmode = false;
+                this.form.reset();
+                $('#AddNew').modal('show');
+            },
 
             deleteUser(id) {
                 Swal.fire({
@@ -145,7 +181,7 @@
                                 'Your file has been deleted.',
                                 'success'
                             )
-                            this.loadUsers()
+                            this.loadUsers();
                         }).catch(() => {
                             Swal.fire(
                                 'Haydaaaa!',
@@ -163,10 +199,10 @@
             createUser(){
                 this.$Progress.start();
                 this.form.post('/api/user')
-                   .then(() => {
+                    .then(() => {
                         Fire.$emit('AfterCreate');
 
-                       $('#FormEkle').modal('hide');
+                        $('#AddNew').modal('hide');
 
                         Toast.fire({
                             icon: 'success',
@@ -174,16 +210,16 @@
                         })
 
                         this.$Progress.finish();
-                   })
+                    })
 
-                .catch(() => {
+                    .catch(() => {
                         console.log("Error......")
                     })
-                }
+            }
         },
         created() {
-          this.loadUsers();
-          // setInterval(() => this.loadUsers(),3000);
+            this.loadUsers();
+            // setInterval(() => this.loadUsers(),3000);
 
             Fire.$on('AfterCreate',()=> {
                 this.loadUsers();
