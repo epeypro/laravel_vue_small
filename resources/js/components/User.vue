@@ -133,7 +133,7 @@
         },
         methods: {
             updateUser() {
-                // this.$Progress.start();
+                this.$Progress.start();
                 this.form.put('api/user/'+this.form.id)
                 .then(() => {
                     $('#AddNew').modal('hide');
