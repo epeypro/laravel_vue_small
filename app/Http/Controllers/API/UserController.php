@@ -27,6 +27,8 @@ class UserController extends Controller
 
     public function store(Request $request)
     {
+//        $this->authorize('isAdmin');
+
         $this->validate($request, [
             'name' => 'required',
             'email' => 'required|string|email|max:100|unique:users',
@@ -90,6 +92,7 @@ class UserController extends Controller
 
     public function update(Request $request, $id)
     {
+//        $this->authorize('isAdmin');
         $user = User::findOrFail($id);
 
         $this->validate($request, [
@@ -108,6 +111,8 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
+//        $this->authorize('isAdmin');
+
         $user = User::findOrFail($id);
         $user->delete();
         return response()->json([
